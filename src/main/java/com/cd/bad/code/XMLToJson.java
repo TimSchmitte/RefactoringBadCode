@@ -42,7 +42,7 @@ public class XMLToJson
     private static final Map<String, String> pathMap;
     static
     {
-        Map<String, String> aMap = new HashMap<String, String>();
+        Map<String, String> aMap = new HashMap<>();
         aMap.put("fk", "folder[@key");
         aMap.put("ft", "folder[@type");
         aMap.put("fth", "folder[@type='history'");
@@ -80,23 +80,15 @@ public class XMLToJson
             System.out.println(realXPathString);
             node = (Element) TOCDoc.selectSingleNode(realXPathString);
         }
-        //List<Element>  li = node.elements();
         for (Iterator<Element> i = node.elementIterator(); i.hasNext();)
         {
-            Element elem = (Element) i.next();
+            Element elem = i.next();
             String eleName = elem.getName();
-            Boolean hasChildren = false;
-            if ((elem.elements().size() > 0))
-            {
-                hasChildren = true;
-                //current element has children itself, state shoud be "closed"
-
-            }
+            boolean hasChildren = elem.elements().size() > 0;
+            //current element has children itself, state should be "closed"
             List<Attribute> list = elem.attributes();
             String titleAttrContent = elem.attributeValue("title");
-            //Boolean isFileAttr = false;
             String fileAttrContent = elem.attributeValue("file");
-            //if  (fileAttrContent.isEmpty() )
             if (eleName == "doc")
             {
                 //doc element always has "file" attribute
@@ -105,7 +97,6 @@ public class XMLToJson
                 {
                     jsonString = jsonString.concat("{");
                     String attrName = attribute.getName();
-                    //System.out.println("doc arribute Name : " + attrName);
                     //each one has to have "data" line, "attr" line "state" line and "children" line
                     jsonString = jsonString.concat("'data':'").concat(titleAttrContent).concat("',");
                     if (attrName.equals("key"))
@@ -123,32 +114,11 @@ public class XMLToJson
 
                         break;
                     }
-					/*		else if (attrName.equals("type"))//type attribute for doc element won't determite what exactly the element is
-							{
-								String typeContent = elem.attributeValue("type");
-								//doc element has type "history"
-								if (typeContent == "history"){
-									jsonString = jsonString.concat("'attr':{'id':'").concat(xPathString).concat("_dth,");
-								}else if (typeContent == "?????"){
-									//any values for type attribute need to concern????
-								}
-
-							}
-							else if (attrName.equals("file"))
-							{
-
-							}*/
                 }
                 if (hasChildren)
                 {
-                    //state set up as "closed" and no need to set up "children" field
                     jsonString = jsonString.concat(",'state':'closed'");
 
-                }
-                else
-                {
-                    //no need to put anything
-                    //jsonString = jsonString.concat("'state':'???'");
                 }
                 jsonString = jsonString.concat("},");
             }
@@ -180,10 +150,6 @@ public class XMLToJson
                             jsonString = jsonString.concat("'attr':{'id':'").concat(xPathString).concat("_fth,");
 
                         }
-                        else if (typeContent == "?????")
-                        {
-                            //any values need to concern????
-                        }
                         break;
 
                     }
@@ -191,22 +157,12 @@ public class XMLToJson
                 }
                 jsonString = jsonString.concat("},");
             }
-            continue;
         }
         //return list;
         jsonString = jsonString.substring(0, jsonString.length() - 1);
         jsonString = jsonString.concat("]");
         return jsonString;
 
-    }
-
-    /*
-     * read xpathstring from post request and generate the real xpath for toc
-     */
-    public String getXPathString()
-    {
-        //readPostRequest()
-        return null;
     }
 
     /*
@@ -266,7 +222,6 @@ public class XMLToJson
             String keyString = "";//not necessary key, might be type attribute
             segString = shortXPath.substring(newStart, shortXPath.indexOf("_", newStart));
             newStart = shortXPath.indexOf("_", newStart) + 1;//new start search point
-            //System.out.println(newStart);
             if (segString.indexOf(":") > 0)
             {
                 keyValueSepPos = segString.indexOf(":");
@@ -312,7 +267,6 @@ public class XMLToJson
 
         test = "";
         System.out.println(x2j.getJson(new URL("http://localhost:8080/WebNavSpring/q400/amm/toc.xml"), test));
-        //System.out.println(x2j.pathMapping(test));
 
     }
 }
